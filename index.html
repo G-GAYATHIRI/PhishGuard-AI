@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PhishGuard AI Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="top-header">
+
+        <div class="logo-area">
+            <div class="logo-icon">🛡️</div>
+
+            <div>
+                <h1>PhishGuard <span>AI</span></h1>
+                <p>Detect Phishing Before It Hurts</p>
+            </div>
+        </div>
+
+        <nav>
+            <button onclick="toggleDarkMode()" class="dark-mode-btn">
+    🌙 Dark Mode
+</button>
+            <a href="#" class="active">Dashboard</a>
+            <a href="#checker">Check URL</a>
+            <a href="#examples">Examples</a>
+            <a href="#about">About</a>
+        </nav>
+
+    </header>
+
+
+    <!-- MAIN DASHBOARD -->
+    <main class="dashboard">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="side-menu">
+
+                <a href="#" class="side-active">
+                    🏠 Dashboard
+                </a>
+
+                <a href="#checker">
+                    🔗 Check URL
+                </a>
+
+                <a href="#examples">
+                    📊 Results
+                </a>
+
+                <a href="#about">
+                    ℹ️ About
+                </a>
+
+            </div>
+
+            <div class="safety-card">
+                <h3>🛡️ Stay Alert</h3>
+                <p>
+                    Think before you click.
+                    PhishGuard AI helps you stay safe online.
+                </p>
+            </div>
+
+        </aside>
+
+
+        <!-- CONTENT -->
+        <section class="content">
+
+            <!-- HERO -->
+            <div class="hero-section" id="checker">
+
+                <div class="hero-text">
+
+                    <p class="small-title">AI-POWERED URL SECURITY</p>
+
+                    <h2>
+                        Check Any URL<br>
+                        <span>for Phishing</span>
+                    </h2>
+
+                    <p class="description">
+                        Enter a website URL and let our Machine Learning
+                        model analyze it for phishing-like patterns.
+                    </p>
+
+                </div>
+
+
+                <!-- URL CHECKER -->
+                <div class="url-checker">
+
+                    <input
+                        type="text"
+                        id="urlInput"
+                        placeholder="Enter website URL...">
+
+                    <button type="button" id="checkUrlButton">
+                        🔍 Check URL
+                    </button>
+
+                </div>
+
+
+                <!-- RESULT -->
+                <div id="result">
+                    <div class="empty-result">
+                        <div class="empty-icon">🔎</div>
+
+                        <h3>Ready to Analyze</h3>
+
+                        <p>
+                            Enter a URL above to check its phishing risk.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+<!-- DASHBOARD STATISTICS -->
+
+<section class="stats-section">
+
+    <div class="stat-card">
+        <div class="stat-icon">🔗</div>
+        <div>
+            <h3 id="totalChecks">0</h3>
+            <p>Total Checks</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">🛡️</div>
+        <div>
+            <h3 id="safeChecks">0</h3>
+            <p>Safe URLs</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">🚨</div>
+        <div>
+            <h3 id="phishingChecks">0</h3>
+            <p>Phishing URLs</p>
+        </div>
+    </div>
+<div class="stat-card">
+    <div class="stat-icon">⚠️</div>
+    <div>
+        <h3 id="suspiciousChecks">0</h3>
+        <p>Suspicious URLs</p>
+    </div>
+</div>
+</section>
+
+            <!-- STATUS CARDS -->
+            <section class="status-section">
+
+                <h2>Security Overview</h2>
+
+                <div class="status-grid">
+
+                    <div class="status-card safe-card">
+
+                        <div class="status-icon">
+                            🛡️
+                        </div>
+
+                        <div>
+                            <h3>Safe</h3>
+                            <p>Low Risk</p>
+                            <strong id="safeOverviewCount">0</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="status-card suspicious-card">
+
+                        <div class="status-icon">
+                            ⚠️
+                        </div>
+
+                        <div>
+                            <h3>Suspicious</h3>
+                            <p>Medium Risk</p>
+                            <strong id="suspiciousOverviewCount"></strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="status-card phishing-card">
+
+                        <div class="status-icon">
+                            🚨
+                        </div>
+
+                        <div>
+                            <h3>Phishing</h3>
+                            <p>High Risk</p>
+                            <strong id="phishingOverviewCount">0</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- EXAMPLES -->
+            <section class="examples-section" id="examples">
+
+                <div class="section-heading">
+
+                    <div>
+                        <p class="small-title">EXAMPLE RESULTS</p>
+
+                        <h2>Understand the Results</h2>
+
+                        <p>
+                            PhishGuard AI classifies URLs based on
+                            their detected risk patterns.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="example-grid">
+
+
+                    <!-- SAFE -->
+                    <div class="example-card safe-example">
+
+                        <div class="example-header">
+
+                            <div class="example-title">
+                                <span>🛡️</span>
+                                <h3>Safe</h3>
+                            </div>
+
+                            <span class="badge safe-badge">
+                                Low Risk
+                            </span>
+
+                        </div>
+
+                        <div class="example-url">
+                            https://google.com
+                        </div>
+
+                        <div class="example-score">
+                            <strong>Low</strong>
+                            <span>Risk Level</span>
+                        </div>
+
+                        <ul>
+                            <li>✓ Normal URL structure</li>
+                            <li>✓ No suspicious keywords</li>
+                            <li>✓ HTTPS connection</li>
+                        </ul>
+
+                    </div>
+
+
+                    <!-- SUSPICIOUS -->
+                    <div class="example-card suspicious-example">
+
+                        <div class="example-header">
+
+                            <div class="example-title">
+                                <span>⚠️</span>
+                                <h3>Suspicious</h3>
+                            </div>
+
+                            <span class="badge suspicious-badge">
+                                Medium Risk
+                            </span>
+
+                        </div>
+
+                        <div class="example-url">
+                            http://example.com/login/verify
+                        </div>
+
+                        <div class="example-score">
+                            <strong>Medium</strong>
+                            <span>Risk Level</span>
+                        </div>
+
+                        <ul>
+                            <li>⚠ Unusual URL pattern</li>
+                            <li>⚠ Suspicious keywords</li>
+                            <li>⚠ No HTTPS</li>
+                        </ul>
+
+                    </div>
+
+
+                    <!-- PHISHING -->
+                    <div class="example-card phishing-example">
+
+                        <div class="example-header">
+
+                            <div class="example-title">
+                                <span>🚨</span>
+                                <h3>Phishing</h3>
+                            </div>
+
+                            <span class="badge phishing-badge">
+                                High Risk
+                            </span>
+
+                        </div>
+
+                        <div class="example-url">
+                            http://example.com/login/password/verify
+                        </div>
+
+                        <div class="example-score">
+                            <strong>High</strong>
+                            <span>Risk Level</span>
+                        </div>
+
+                        <ul>
+                            <li>✕ Multiple suspicious keywords</li>
+                            <li>✕ Unusual URL pattern</li>
+                            <li>✕ No HTTPS</li>
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            </section>
+<!-- Security Analytics Chart -->
+<section class="chart-section">
+
+    <div class="section-heading">
+        <p class="small-title">SECURITY ANALYTICS</p>
+
+        <h2>URL Security Overview</h2>
+
+        <p>
+            Overview of your recent URL checks.
+        </p>
+    </div>
+
+    <div style="max-width:500px; margin:30px auto;">
+        <canvas id="securityChart"></canvas>
+    </div>
+
+</section>
+
+            <!-- HISTORY -->
+<section class="history-section" id="history">
+
+    <div class="section-heading">
+        <p class="small-title">RECENT CHECKS</p>
+        <h2>URL Check History</h2>
+        <button onclick="clearHistory()" class="clear-history-btn">
+    🗑️ Clear History
+</button>
+        <p>Your recently analyzed URLs will appear here.</p>
+    </div>
+
+    <div id="historyList" class="history-list">
+        <div class="empty-history">
+            No URL checks yet.
+        </div>
+    </div>
+
+</section>
+
+            <!-- ABOUT -->
+            <section class="about-section" id="about">
+
+                <div class="about-card">
+
+                    <div class="about-icon">
+                        🤖
+                    </div>
+
+                    <div>
+                        <h2>How PhishGuard AI Works</h2>
+
+                        <p>
+                            PhishGuard AI uses a Machine Learning model
+                            to analyze URL patterns and classify them
+                            as low risk or phishing-like.
+                        </p>
+
+                        <div class="features">
+
+                            <span>🤖 Machine Learning</span>
+                            <span>🔗 URL Analysis</span>
+                            <span>🛡️ Risk Detection</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+        <div>
+            <strong>🛡️ PhishGuard AI</strong>
+            <p>Detect Phishing Before It Hurts</p>
+        </div>
+
+        <p>
+            Powered by Machine Learning • © 2026 PhishGuard AI
+        </p>
+
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+
+</body>
+
+</html>
