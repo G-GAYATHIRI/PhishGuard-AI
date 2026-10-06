@@ -38,7 +38,7 @@ async function checkURL() {
     try {
 
         const response = await fetch(
-            "http://127.0.0.1:5000/check-url",
+            "/check-url",
             {
                 method: "POST",
                 headers: {
@@ -113,9 +113,6 @@ async function checkURL() {
             `;
         }
 
-        // IMPORTANT:
-        // Use resultBox, not result
-
         resultBox.innerHTML = `
 
             <div class="result-card ${resultClass}">
@@ -188,22 +185,15 @@ async function checkURL() {
 
 
         // Save history
-
-         saveToHistory(data);
-
+        saveToHistory(data);
 
         // Update history
-
         await displayHistory();
 
-
         // Update statistics
-
         await updateStatistics();
 
-
         // Update chart
-
         await createSecurityChart();
 
 
@@ -220,7 +210,7 @@ async function checkURL() {
                 </h2>
 
                 <p>
-                    Please make sure the Flask backend is running.
+                    Please make sure the PhishGuard AI server is running.
                 </p>
 
             </div>
@@ -285,7 +275,7 @@ async function displayHistory() {
     try {
 
         const response = await fetch(
-            "http://127.0.0.1:5000/history"
+            "/history"
         );
 
 
@@ -386,15 +376,17 @@ async function displayHistory() {
 // ===============================
 // DATABASE STATISTICS
 // ===============================
+
 async function updateStatistics() {
 
     try {
 
         const response = await fetch(
-            "http://127.0.0.1:5000/statistics"
+            "/statistics"
         );
 
         const data = await response.json();
+
 
         const totalChecks =
             document.getElementById("totalChecks");
@@ -412,41 +404,66 @@ async function updateStatistics() {
             document.getElementById("safeOverviewCount");
 
         const suspiciousOverviewCount =
-            document.getElementById("suspiciousOverviewCount");
-const phishingOverviewCount =
-    document.getElementById("phishingOverviewCount");
+            document.getElementById(
+                "suspiciousOverviewCount"
+            );
+
+        const phishingOverviewCount =
+            document.getElementById(
+                "phishingOverviewCount"
+            );
+
+
         if (totalChecks) {
+
             totalChecks.textContent =
                 data.total;
+
         }
 
         if (safeChecks) {
+
             safeChecks.textContent =
                 data.safe;
+
         }
 
         if (phishingChecks) {
+
             phishingChecks.textContent =
                 data.phishing;
+
         }
 
         if (suspiciousChecks) {
+
             suspiciousChecks.textContent =
                 data.suspicious;
+
         }
 
         if (safeOverviewCount) {
+
             safeOverviewCount.textContent =
                 data.safe;
+
         }
-if (suspiciousOverviewCount) {
-    suspiciousOverviewCount.textContent =
-        data.suspicious;
-}
-if (phishingOverviewCount) {
-    phishingOverviewCount.textContent =
-        data.phishing;
-}
+
+        if (suspiciousOverviewCount) {
+
+            suspiciousOverviewCount.textContent =
+                data.suspicious;
+
+        }
+
+        if (phishingOverviewCount) {
+
+            phishingOverviewCount.textContent =
+                data.phishing;
+
+        }
+
+
     } catch (error) {
 
         console.error(
@@ -466,7 +483,7 @@ async function clearHistory() {
     try {
 
         const response = await fetch(
-            "http://127.0.0.1:5000/clear-history",
+            "/clear-history",
             {
                 method: "DELETE"
             }
@@ -579,7 +596,7 @@ async function createSecurityChart() {
     try {
 
         const response = await fetch(
-            "http://127.0.0.1:5000/statistics"
+            "/statistics"
         );
 
 
@@ -683,18 +700,21 @@ document.addEventListener(
         await createSecurityChart();
 
 
-        // CHECK URL BUTTON
-
         const checkButton =
             document.getElementById(
                 "checkUrlButton"
             );
 
 
-       if (checkButton) {
-    checkButton.onclick = function() {
-        checkURL();        };
-}
-}
-            
+        if (checkButton) {
+
+            checkButton.onclick = function () {
+
+                checkURL();
+
+            };
+
+        }
+
+    }
 );
