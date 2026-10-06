@@ -11,80 +11,43 @@ from database import create_database
 app = Flask(__name__)
 CORS(app)
 
-# Project root folder
-BASE_DIR = os.path.dirname(
-    os.path.abspath(__file__)
-)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Load ML model
 model = joblib.load(
-    os.path.join(
-        BASE_DIR,
-        "phishing_model.pkl"
-    )
+    os.path.join(BASE_DIR, "phishing_model.pkl")
 )
 
 vectorizer = joblib.load(
-    os.path.join(
-        BASE_DIR,
-        "url_vectorizer.pkl"
-    )
+    os.path.join(BASE_DIR, "url_vectorizer.pkl")
 )
 
-DATABASE = os.path.join(
-    BASE_DIR,
-    "phishguard.db"
-)
+DATABASE = os.path.join(BASE_DIR, "phishguard.db")
 
-
-# =========================
-# FRONTEND
-# =========================
 
 @app.route("/")
 def home():
-    return send_from_directory(
-        BASE_DIR,
-        "index.html"
-    )
+    return send_from_directory(BASE_DIR, "index.html")
 
 
 @app.route("/style.css")
 def style():
-    return send_from_directory(
-        BASE_DIR,
-        "style.css"
-    )
+    return send_from_directory(BASE_DIR, "style.css")
 
 
 @app.route("/script.js")
 def script():
-    return send_from_directory(
-        BASE_DIR,
-        "script.js"
-    )
+    return send_from_directory(BASE_DIR, "script.js")
 
-
-# =========================
-# URL FEATURES
-# =========================
 
 def detect_url_features(url):
 
     features = []
 
     if not url.startswith("https://"):
-        features.append(
-            "Website is not using HTTPS"
-        )
+        features.append("Website is not using HTTPS")
 
-    if re.search(
-        r"\d+\.\d+\.\d+\.\d+",
-        url
-    ):
-        features.append(
-            "URL contains an IP address"
-        )
+    if re.search(r"\d+\.\d+\.\d+\.\d+", url):
+        features.append("URL contains an IP address")
 
     suspicious_words = [
         "login",
@@ -98,49 +61,40 @@ def detect_url_features(url):
     ]
 
     for word in suspicious_words:
-
         if word in url.lower():
-
             features.append(
                 f"Suspicious keyword detected: {word}"
             )
 
     if len(url) > 75:
-
-        features.append(
-            "URL is unusually long"
-        )
+        features.append("URL is unusually long")
 
     if "@" in url:
-
-        features.append(
-            "URL contains @ symbol"
-        )
+        features.append("URL contains @ symbol")
 
     return features
 
 
-# =========================
-# CHECK URL
-# =========================
-
-@app.route(
-    "/check-url",
-    methods=["POST"]
-)
+@app.route("/check-url", methods=["POST"])
 def check_url():
 
     data = request.get_json()
 
-    url = data.get(
-        "url",
-        ""
-    ).strip()
+    if not data:
+        return jsonify({
+            "url": "",
+            "result": "Invalid URL",
+            "risk_score": 0,
+            "risk_level": "Invalid",
+            "reasons": [
+                "Please enter a valid website URL"
+            ],
+            "features": []
+        })
 
-    if not url.startswith(
-        ("http://", "https://")
-    ):
+    url = data.get("url", "").strip()
 
+    if not url.startswith(("http://", "https://")):
         return jsonify({
             "url": url,
             "result": "Invalid URL",
@@ -152,38 +106,24 @@ def check_url():
             "features": []
         })
 
-    url_features = vectorizer.transform(
-        [url]
-    )
+    url_features = vectorizer.transform([url])
 
-    prediction = model.predict(
-        url_features
-    )[0]
+    prediction = model.predict(url_features)[0]
 
-    probability = model.predict_proba(
-        url_features
-    )[0][1]
+    probability = model.predict_proba(url_features)[0][1]
 
-    risk_score = round(
-        probability * 100
-    )
+    risk_score = round(probability * 100)
 
-    features = detect_url_features(
-        url
-    )
+    features = detect_url_features(url)
 
     if risk_score < 40:
-
         risk_level = "Low Risk"
 
     elif risk_score < 70:
-
         risk_level = "Suspicious"
 
     else:
-
         risk_level = "High Risk"
-
 
     if prediction == 1:
 
@@ -204,17 +144,19 @@ def check_url():
             "No strong phishing pattern was detected"
         ]
 
-
-    connection = sqlite3.connect(
-        DATABASE
-    )
+    connection = sqlite3.connect(DATABASE)
 
     cursor = connection.cursor()
 
     cursor.execute(
         """
         INSERT INTO url_checks
-        (url, result, risk_score, risk_level)
+        (
+            url,
+            result,
+            risk_score,
+            risk_level
+        )
         VALUES (?, ?, ?, ?)
         """,
         (
@@ -226,52 +168,39 @@ def check_url():
     )
 
     connection.commit()
+
     connection.close()
 
-
     return jsonify({
-
         "url": url,
-
         "result": result,
-
         "risk_score": risk_score,
-
         "risk_level": risk_level,
-
         "reasons": reasons,
-
         "features": features
-
     })
 
 
-# =========================
-# HISTORY
-# =========================
-
-@app.route(
-    "/history",
-    methods=["GET"]
-)
+@app.route("/history", methods=["GET"])
 def get_history():
 
-    connection = sqlite3.connect(
-        DATABASE
-    )
+    connection = sqlite3.connect(DATABASE)
 
     cursor = connection.cursor()
 
-    cursor.execute("""
-        SELECT url,
-               result,
-               risk_score,
-               risk_level,
-               checked_at
+    cursor.execute(
+        """
+        SELECT
+            url,
+            result,
+            risk_score,
+            risk_level,
+            checked_at
         FROM url_checks
         ORDER BY id DESC
         LIMIT 10
-    """)
+        """
+    )
 
     rows = cursor.fetchall()
 
@@ -282,191 +211,126 @@ def get_history():
     for row in rows:
 
         history.append({
-
             "url": row[0],
-
             "result": row[1],
-
             "risk_score": row[2],
-
             "risk_level": row[3],
-
             "date": row[4]
-
         })
 
     return jsonify(history)
 
 
-# =========================
-# CLEAR HISTORY
-# =========================
-
-@app.route(
-    "/clear-history",
-    methods=["DELETE"]
-)
+@app.route("/clear-history", methods=["DELETE"])
 def clear_history():
 
-    connection = sqlite3.connect(
-        DATABASE
-    )
+    connection = sqlite3.connect(DATABASE)
 
     cursor = connection.cursor()
 
-    cursor.execute(
-        "DELETE FROM url_checks"
-    )
+    cursor.execute("DELETE FROM url_checks")
 
     connection.commit()
 
     connection.close()
 
     return jsonify({
-
-        "message":
-        "History cleared successfully"
-
+        "message": "History cleared successfully"
     })
 
 
-# =========================
-# STATISTICS
-# =========================
-
-@app.route(
-    "/statistics",
-    methods=["GET"]
-)
+@app.route("/statistics", methods=["GET"])
 def get_statistics():
 
-    connection = sqlite3.connect(
-        DATABASE
-    )
+    connection = sqlite3.connect(DATABASE)
 
     cursor = connection.cursor()
 
-
-    cursor.execute("""
+    cursor.execute(
+        """
         SELECT COUNT(*)
         FROM url_checks
-    """)
+        """
+    )
 
     total = cursor.fetchone()[0]
 
-
-    cursor.execute("""
+    cursor.execute(
+        """
         SELECT COUNT(*)
         FROM url_checks
         WHERE risk_level = 'Low Risk'
-    """)
+        """
+    )
 
     safe = cursor.fetchone()[0]
 
-
-    cursor.execute("""
+    cursor.execute(
+        """
         SELECT COUNT(*)
         FROM url_checks
         WHERE risk_level = 'Suspicious'
-    """)
+        """
+    )
 
     suspicious = cursor.fetchone()[0]
 
-
-    cursor.execute("""
+    cursor.execute(
+        """
         SELECT COUNT(*)
         FROM url_checks
         WHERE risk_level = 'High Risk'
-    """)
+        """
+    )
 
     phishing = cursor.fetchone()[0]
 
-
     connection.close()
 
-
     return jsonify({
-
         "total": total,
-
         "safe": safe,
-
         "phishing": phishing,
-
         "suspicious": suspicious
-
     })
 
 
-# =========================
-# FEATURE IMPORTANCE
-# =========================
-
-@app.route(
-    "/feature-importance",
-    methods=["GET"]
-)
+@app.route("/feature-importance", methods=["GET"])
 def feature_importance():
 
     try:
 
-        importances = (
-            model.feature_importances_
-        )
+        importances = model.feature_importances_
 
-        feature_names = (
-            vectorizer
-            .get_feature_names_out()
-        )
+        feature_names = vectorizer.get_feature_names_out()
 
-        indices = np.argsort(
-            importances
-        )[-10:][::-1]
+        indices = np.argsort(importances)[-10:][::-1]
 
         features = []
 
         for index in indices:
 
             features.append({
-
-                "feature":
-                feature_names[index],
-
-                "importance":
-                round(
-                    float(
-                        importances[index]
-                    ) * 100,
+                "feature": feature_names[index],
+                "importance": round(
+                    float(importances[index]) * 100,
                     2
                 )
-
             })
 
         return jsonify({
-
             "features": features
-
         })
 
     except Exception as error:
 
         return jsonify({
-
             "error": str(error)
-
         }), 500
 
 
-# =========================
-# DATABASE
-# =========================
-
 create_database()
 
-
-# =========================
-# RUN
-# =========================
 
 if __name__ == "__main__":
 
