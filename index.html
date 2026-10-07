@@ -436,7 +436,142 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
+<!-- QR SCANNER -->
+<div id="qrScannerBox" style="
+    display:none;
+    position:fixed;
+    inset:0;
+    background:#000;
+    z-index:99999;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    padding:20px;
+">
 
+    <h2 style="color:white;">📷 PhishGuard AI QR Scanner</h2>
+
+    <video id="qrVideo"
+        autoplay
+        playsinline
+        style="width:90%;max-width:500px;border-radius:15px;">
+    </video>
+
+    <p id="qrMessage" style="color:white;">
+        Point camera at QR code
+    </p>
+
+    <button onclick="closeQRScanner()" style="
+        padding:12px 25px;
+        border:0;
+        border-radius:8px;
+        cursor:pointer;
+        font-size:16px;">
+        ✕ Close Scanner
+    </button>
+
+    <canvas id="qrCanvas" hidden></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
+<script>
+let qrStream = null;
+let qrScanning = false;
+
+function openQRScanner() {
+
+    const box = document.getElementById("qrScannerBox");
+    box.style.display = "flex";
+
+    navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" }
+    })
+    .then(stream => {
+
+        qrStream = stream;
+
+        const video = document.getElementById("qrVideo");
+        video.srcObject = stream;
+
+        qrScanning = true;
+        scanQRCode();
+
+    })
+    .catch(() => {
+
+        document.getElementById("qrMessage").innerText =
+            "❌ Camera permission denied. Please allow camera access.";
+
+    });
+}
+
+function scanQRCode() {
+
+    if (!qrScanning) return;
+
+    const video = document.getElementById("qrVideo");
+    const canvas = document.getElementById("qrCanvas");
+
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const ctx = canvas.getContext("2d");
+
+        ctx.drawImage(
+            video,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        const image = ctx.getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        const code = jsQR(
+            image.data,
+            image.width,
+            image.height
+        );
+
+        if (code) {
+
+            qrScanning = false;
+
+            document.getElementById("qrMessage").innerText =
+                "✅ QR detected! Opening...";
+
+            setTimeout(() => {
+                window.location.href = code.data;
+            }, 500);
+
+            return;
+        }
+    }
+
+    requestAnimationFrame(scanQRCode);
+}
+
+function closeQRScanner() {
+
+    qrScanning = false;
+
+    if (qrStream) {
+
+        qrStream.getTracks().forEach(track => track.stop());
+        qrStream = null;
+    }
+
+    document.getElementById("qrScannerBox").style.display = "none";
+}
+</script>
 </body>
 
 </html>
