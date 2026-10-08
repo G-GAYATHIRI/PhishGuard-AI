@@ -1,4 +1,3 @@
-
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import joblib
@@ -15,7 +14,7 @@ CORS(app)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.dirname(BASE_DIR)
 
-FRONTEND_DIR = os.path.join(PROJECT_DIR, "frontend")
+FRONTEND_DIR = PROJECT_DIR
 DATABASE = os.path.join(BASE_DIR, "phishguard.db")
 
 # Load the trained ML model and URL vectorizer
