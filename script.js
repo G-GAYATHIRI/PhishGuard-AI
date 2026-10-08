@@ -637,3 +637,40 @@ document.addEventListener(
 
     }
 );
+async function loadSecurityChart() {
+    const response = await fetch("/statistics");
+    const stats = await response.json();
+
+    const canvas = document.getElementById("securityChart");
+    if (!canvas || typeof Chart === "undefined") {
+        console.error("Chart.js or canvas is missing");
+        return;
+    }
+
+    if (window.securityChartInstance) {
+        window.securityChartInstance.destroy();
+    }
+
+    window.securityChartInstance = new Chart(canvas, {
+        type: "doughnut",
+        data: {
+            labels: ["Safe", "Suspicious", "Phishing"],
+            datasets: [{
+                data: [
+                    stats.safe || 0,
+                    stats.suspicious || 0,
+                    stats.phishing || 0
+                ],
+                backgroundColor: ["#22c55e", "#f59e0b", "#ef4444"]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: "bottom" }
+            }
+        }
+    });
+}
+
+loadSecurityChart();
