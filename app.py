@@ -12,7 +12,7 @@ app = Flask(__name__)
 CORS(app)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_DIR = os.path.dirname(BASE_DIR)
+PROJECT_DIR = BASE_DIR
 
 FRONTEND_DIR = PROJECT_DIR
 DATABASE = os.path.join(BASE_DIR, "phishguard.db")
